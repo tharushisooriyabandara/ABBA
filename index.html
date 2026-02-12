@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in — ABBA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="page">
+    <div class="panel panel--form">
+      <header class="brand">
+        <h1 class="brand__name">ABBA</h1>
+        <p class="brand__tagline">Welcome back to your shop</p>
+      </header>
+
+      <form class="login-form" id="loginForm" novalidate>
+        <div class="field">
+          <label class="field__label" for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="field__input"
+            placeholder="you@example.com"
+            autocomplete="email"
+            required
+          >
+          <span class="field__error" id="emailError" aria-live="polite"></span>
+        </div>
+
+        <div class="field">
+          <div class="field__label-row">
+            <label class="field__label" for="password">Password</label>
+            <a href="#" class="field__link">Forgot password?</a>
+          </div>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            class="field__input"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            required
+          >
+          <span class="field__error" id="passwordError" aria-live="polite"></span>
+        </div>
+
+        <button type="submit" class="btn btn--primary" id="submitBtn">
+          Sign in
+        </button>
+      </form>
+
+      <p class="footer-note">
+        Don’t have an account? <a href="#">Contact us</a>
+      </p>
+    </div>
+
+    <div class="panel panel--art">
+      <div class="art__content">
+        <p class="art__quote">"Quality you can trust."</p>
+        <p class="art__brand">ABBA</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/login.js"></script>
+</body>
+</html>
