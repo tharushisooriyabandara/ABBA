@@ -435,6 +435,13 @@
     if (id) openOrderEdit(id);
   }
 
+  function printOrderFromView() {
+    var id = window._abbaViewedOrderId;
+    if (!id) return;
+    var order = getOrderById(id);
+    if (order) printOrderReceipt(order);
+  }
+
   function openOrderEdit(orderId) {
     var order = getOrderById(orderId);
     if (!order) return;
@@ -564,6 +571,7 @@
   window.abbaViewOrder = openOrderView;
   window.abbaCloseOrderViewModal = closeOrderViewModal;
   window.abbaEditOrderFromView = editOrderFromView;
+  window.abbaPrintOrderFromView = printOrderFromView;
 
   function escapeHtml(str) {
     if (str == null) return '—';

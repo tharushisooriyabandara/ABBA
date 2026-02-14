@@ -1382,6 +1382,44 @@ body {
   max-width: 560px;
 }
 
+.modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 1.25rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.modal__header .modal__title {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.modal__print-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-panel);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+}
+
+.modal__print-icon:hover {
+  color: var(--accent);
+  background: var(--accent-light);
+  border-color: var(--accent);
+}
+
 .modal__title {
   font-family: var(--font-serif);
   font-size: 1.25rem;
