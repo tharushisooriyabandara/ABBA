@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home — ABBA International Men's Wear</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="home-page">
+  <header class="home-header">
+    <div class="home-header__brand">
+      <img src="images/logo.png" alt="ABBA" class="brand__logo brand__logo--header">
+      <p class="brand__tagline brand__tagline--header">International Men's Wear</p>
+    </div>
+
+    <div class="home-header__user">
+      <p class="home-header__welcome"><strong>Welcome!</strong> <br> You're logged in to <strong id="branchNameMain"></strong>.</p>
+    </div>
+  </header>
+
+  <div class="home-layout">
+    <nav class="home-sidebar" aria-label="Main">
+      <ul class="home-nav">
+        <li><a href="#" class="home-nav__link home-nav__link--active" data-panel="order-create">Order creation</a></li>
+        <li><a href="#" class="home-nav__link" data-panel="order-history">Order history</a></li>
+        <li><a href="#" class="home-nav__link" data-panel="sales-report">Sales report</a></li>
+        <li id="nav-employees-wrap" hidden><a href="#" class="home-nav__link" data-panel="employees">Employee management</a></li>
+        <li id="nav-leave-report-wrap" hidden><a href="#" class="home-nav__link" data-panel="leave-report">Leave report</a></li>
+      </ul>
+      <div class="home-sidebar__footer">
+        <a href="index.html" class="btn btn--outline home-sidebar__logout">Log out</a>
+      </div>
+    </nav>
+
+    <main class="home-content">
+      <div class="home-content__heading-bar">
+        <div class="home-content__title-block">
+          <div class="home-content__title-bar" aria-hidden="true"></div>
+          <div class="home-content__title-text">
+            <h1 class="home-content__title" id="homePanelTitle">New customer order</h1>
+            <p class="home-content__title-sub" id="homePanelTitleSub">Create a new customer order</p>
+          </div>
+        </div>
+      </div>
+      <section class="home-panel home-panel--order-create" id="panel-order-create">
+        <form class="order-form order-form--compact" id="orderForm" novalidate>
+          <input type="hidden" id="orderId" name="orderId" value="">
+          <div class="order-form__top-row">
+            <div class="field order-form__order-id-field" id="orderFormOrderIdField">
+              <label class="field__label">Order ID</label>
+              <p class="field__readonly" id="orderDisplayId" aria-live="polite">—</p>
+            </div>
+            <div class="field order-form__branch-field" id="orderFormBranchField">
+              <label class="field__label" for="orderBranch">Branch</label>
+              <select id="orderBranch" name="orderBranch" class="field__input field__select">
+                <option value="panadura">Panadura</option>
+                <option value="nugegoda">Nugegoda</option>
+                <option value="piliyandala">Piliyandala</option>
+              </select>
+            </div>
+            <div class="field">
+              <label class="field__label" for="customerName">Customer name</label>
+              <input type="text" id="customerName" name="customerName" class="field__input" placeholder="Full name" required>
+              <span class="field__error" id="customerNameError"></span>
+            </div>
+            <div class="field">
+              <label class="field__label" for="customerPhone">Phone</label>
+              <input type="tel" id="customerPhone" name="customerPhone" class="field__input" placeholder="Phone number" required>
+              <span class="field__error" id="customerPhoneError"></span>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field__label" for="orderDetails">Order details</label>
+            <textarea id="orderDetails" name="orderDetails" class="field__input field__textarea field__textarea--compact" placeholder="Items, sizes, quantities..." rows="2" required></textarea>
+            <span class="field__error" id="orderDetailsError"></span>
+          </div>
+          <div class="order-form__bottom-row">
+            <div class="field">
+              <label class="field__label" for="totalAmount">Total amount (LKR)</label>
+              <input type="number" id="totalAmount" name="totalAmount" class="field__input" placeholder="0" min="0" step="0.01" required>
+              <span class="field__error" id="totalAmountError"></span>
+            </div>
+            <div class="field">
+              <label class="field__label" for="orderAdvance">Advance (LKR)</label>
+              <input type="number" id="orderAdvance" name="advance" class="field__input" placeholder="0" min="0" step="0.01">
+            </div>
+            <div class="field">
+              <label class="field__label" for="orderNotes">Notes (optional)</label>
+              <input type="text" id="orderNotes" name="orderNotes" class="field__input" placeholder="Delivery, special requests...">
+            </div>
+          </div>
+          <div class="order-form__actions">
+            <p class="order-form__remaining" id="orderRemainingToGive" aria-live="polite"></p>
+            <button type="submit" class="btn btn--primary order-form__submit" id="orderFormSubmitBtn">Save order</button>
+          </div>
+        </form>
+        <div class="order-form__after-submit">
+          <p class="order-form__message" id="orderMessage" aria-live="polite"></p>
+          <p class="order-form__print-wrap" id="orderPrintWrap" hidden>
+            <button type="button" class="btn btn--outline order-form__print-btn" id="orderPrintReceiptBtn" aria-label="Print receipt">Print receipt</button>
+          </p>
+        </div>
+      </section>
+
+      <section class="home-panel home-panel--hidden" id="panel-order-history">
+        <div class="order-history-filters">
+          <div class="field order-history-filters__search">
+            <label class="field__label" for="orderHistorySearch">Search</label>
+            <input type="text" id="orderHistorySearch" class="field__input" placeholder="Order ID, customer, phone, branch…">
+          </div>
+          <div class="field">
+            <label class="field__label" for="orderHistoryFrom">From date</label>
+            <input type="date" id="orderHistoryFrom" class="field__input">
+          </div>
+          <div class="field">
+            <label class="field__label" for="orderHistoryTo">To date</label>
+            <input type="date" id="orderHistoryTo" class="field__input">
+          </div>
+          <div class="field">
+            <label class="field__label" for="orderHistoryStatus">Status</label>
+            <select id="orderHistoryStatus" class="field__input field__select">
+              <option value="">All</option>
+              <option value="pending">Pending</option>
+              <option value="returned">Returned</option>
+            </select>
+          </div>
+        </div>
+        <div class="admin-orders-wrap">
+          <table class="admin-orders-table" id="orderHistoryTable">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Date & time</th>
+                <th>Branch</th>
+                <th>Customer</th>
+                <th>Amount (LKR)</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="orderHistoryBody"></tbody>
+          </table>
+        </div>
+        <p class="admin-orders-empty" id="orderHistoryEmpty">No orders yet.</p>
+        <div class="pagination" id="orderHistoryPagination" aria-label="Order history pagination"></div>
+      </section>
+
+      <section class="home-panel home-panel--hidden" id="panel-sales-report">
+        <div class="leave-report-filters">
+          <div class="field">
+            <label class="field__label" for="salesReportFrom">From</label>
+            <input type="date" id="salesReportFrom" class="field__input">
+          </div>
+          <div class="field">
+            <label class="field__label" for="salesReportTo">To</label>
+            <input type="date" id="salesReportTo" class="field__input">
+          </div>
+        </div>
+        <div class="sales-summary-grid" id="salesSummaryGrid">
+          <div class="sales-summary-card sales-summary-card--orders">
+            <span class="sales-summary-card__label">Total orders</span>
+            <span class="sales-summary-card__value" id="salesTotalOrders">0</span>
+          </div>
+          <div class="sales-summary-card sales-summary-card--revenue">
+            <span class="sales-summary-card__label">Total revenue</span>
+            <span class="sales-summary-card__value" id="salesTotalRevenue">0 LKR</span>
+          </div>
+          <div class="sales-summary-card sales-summary-card--collected">
+            <span class="sales-summary-card__label">Collected (advance)</span>
+            <span class="sales-summary-card__value" id="salesCollected">0 LKR</span>
+          </div>
+          <div class="sales-summary-card sales-summary-card--pending">
+            <span class="sales-summary-card__label">Pending</span>
+            <span class="sales-summary-card__value" id="salesPendingRevenue">0 LKR</span>
+          </div>
+        </div>
+        <h3 class="sales-section-heading">By branch</h3>
+        <div class="sales-branch-grid" id="salesBranchGrid"></div>
+      </section>
+
+      <section class="home-panel home-panel--hidden" id="panel-employees">
+        <p class="order-section__subtitle">Add, edit, or remove employees. PIN is used for branch login.</p>
+        <p class="employee-message employee-message--success" id="employeeMessage" aria-live="polite" hidden></p>
+        <div class="employee-actions-row">
+          <button type="button" class="btn btn--primary btn--add" id="employeeAddBtn">Add employee</button>
+          <button type="button" class="btn btn--outline" id="addLeaveBtn">Leave Request</button>
+        </div>
+        <div class="field employee-search-field">
+          <label class="field__label" for="employeeSearch">Search</label>
+          <input type="text" id="employeeSearch" class="field__input" placeholder="Name, phone, email, branch…">
+        </div>
+        <div class="admin-orders-wrap">
+          <table class="admin-orders-table" id="employeesTable">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Branch</th>
+                <th>Role</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="employeesBody"></tbody>
+          </table>
+        </div>
+        <p class="admin-orders-empty" id="employeesEmpty">No employees yet.</p>
+        <div class="pagination" id="employeesPagination" aria-label="Employee list pagination"></div>
+      </section>
+
+      <section class="home-panel home-panel--hidden" id="panel-leave-report">
+        <p class="order-section__subtitle">Employees on leave by branch. Filter by date (default: today) and branch.</p>
+        <div class="leave-report-filters">
+          <div class="field">
+            <label class="field__label" for="leaveReportDate">Date</label>
+            <input type="date" id="leaveReportDate" class="field__input">
+          </div>
+          <div class="field">
+            <label class="field__label" for="leaveReportBranch">Branch</label>
+            <select id="leaveReportBranch" class="field__input field__select">
+              <option value="">All branches</option>
+              <option value="panadura">Panadura</option>
+              <option value="nugegoda">Nugegoda</option>
+              <option value="piliyandala">Piliyandala</option>
+            </select>
+          </div>
+        </div>
+        <div class="leave-report-content" id="leaveReportContent">
+          <p class="admin-orders-empty" id="leaveReportEmpty">No employees on leave for the selected date.</p>
+          <div class="leave-report-by-branch" id="leaveReportByBranch"></div>
+          <div class="pagination" id="leaveReportPagination" aria-label="Leave report pagination"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="orderViewModal" hidden>
+    <div class="modal modal--wide">
+      <h3 class="modal__title" id="orderViewModalTitle">Order details</h3>
+      <dl class="view-dl" id="orderViewDetails"></dl>
+      <div class="modal__actions">
+        <button type="button" class="btn btn--outline" onclick="window.abbaCloseOrderViewModal()">Close</button>
+        <button type="button" class="btn btn--primary" id="orderViewEditBtn" onclick="window.abbaEditOrderFromView()">Edit</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="returnConfirmModal" hidden>
+    <div class="modal">
+      <h3 class="modal__title">Return order</h3>
+      <p class="return-confirm__message" id="returnConfirmMessage"></p>
+      <div class="modal__actions">
+        <button type="button" class="btn btn--outline" onclick="window.abbaCloseReturnConfirmModal()">Cancel</button>
+        <button type="button" class="btn btn--outline" id="returnConfirmNoPaymentBtn" onclick="window.abbaConfirmReturnNoPayment()">Mark returned</button>
+        <button type="button" class="btn btn--primary" id="returnConfirmPaidBtn" onclick="window.abbaConfirmReturnPaidFull()">Pay full amount</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="employeeModal" hidden>
+    <div class="modal">
+      <h3 class="modal__title" id="employeeModalTitle">Add employee</h3>
+      <form class="order-form" id="employeeForm" novalidate onsubmit="window.abbaSaveEmployee(); return false;">
+        <input type="hidden" id="employeeId" name="id">
+        <div class="field">
+          <label class="field__label" for="empName">Name</label>
+          <input type="text" id="empName" name="name" class="field__input" required>
+          <span class="field__error" id="empNameError"></span>
+        </div>
+        <div class="order-form__row">
+          <div class="field">
+            <label class="field__label" for="empPhone">Phone</label>
+            <input type="tel" id="empPhone" name="phone" class="field__input">
+          </div>
+          <div class="field">
+            <label class="field__label" for="empEmail">Email</label>
+            <input type="email" id="empEmail" name="email" class="field__input">
+          </div>
+        </div>
+        <div class="order-form__row">
+          <div class="field">
+            <label class="field__label" for="empBranch">Branch</label>
+            <select id="empBranch" name="branch" class="field__input field__select" required>
+              <option value="panadura">Panadura</option>
+              <option value="nugegoda">Nugegoda</option>
+              <option value="piliyandala">Piliyandala</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field__label" for="empRole">Role</label>
+            <select id="empRole" name="role" class="field__input field__select">
+              <option value="staff">Staff</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+        </div>
+        <div class="order-form__row">
+          <div class="field">
+            <label class="field__label" for="empJoinDate">Join date</label>
+            <input type="date" id="empJoinDate" name="join_date" class="field__input">
+          </div>
+          <div class="field">
+            <label class="field__label" for="empEndDate">End date</label>
+            <input type="date" id="empEndDate" name="end_date" class="field__input">
+          </div>
+        </div>
+        <div class="field field--checkbox">
+          <label class="field__checkbox-label">
+            <input type="checkbox" id="empStillWorking" name="is_active" class="field__checkbox" checked>
+            <span>Still working</span>
+          </label>
+        </div>
+        <div class="modal__actions">
+          <button type="button" class="btn btn--outline" id="employeeModalCancel" onclick="window.abbaCloseEmployeeModal()">Cancel</button>
+          <button type="submit" class="btn btn--primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="employeeViewModal" hidden>
+    <div class="modal modal--wide">
+      <h3 class="modal__title" id="employeeViewModalTitle">Employee details</h3>
+      <div id="employeeViewContent">
+        <dl class="view-dl" id="employeeViewDetails"></dl>
+        <h4 class="view-leave-heading">Leave (this leave year)</h4>
+        <div class="leave-summary-grid">
+          <div class="leave-summary-card">
+            <span class="leave-summary-value" id="employeeViewLeaveUsed">0</span>
+            <span class="leave-summary-label">Total leave taken</span>
+          </div>
+          <div class="leave-summary-card leave-summary-card--remaining">
+            <span class="leave-summary-value" id="employeeViewLeaveRemainingVal">0</span>
+            <span class="leave-summary-label">Remaining leave</span>
+          </div>
+        </div>
+        <p class="view-leave-meta" id="employeeViewLeaveMeta"></p>
+        <h4 class="view-leave-heading view-leave-heading--table">Leave history</h4>
+        <p class="admin-orders-empty" id="employeeViewLeaveEmpty">No leave records.</p>
+        <div class="admin-orders-wrap">
+          <table class="admin-orders-table" id="employeeViewLeaveTable">
+            <thead>
+              <tr>
+                <th>From</th>
+                <th>To</th>
+                <th>Days</th>
+                <th>Type</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="employeeViewLeaveBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal__actions" style="margin-top:1rem">
+        <button type="button" class="btn btn--outline" onclick="window.abbaCloseEmployeeViewModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="addLeaveModal" hidden>
+    <div class="modal">
+      <h3 class="modal__title">Add leave</h3>
+      <form id="addLeaveForm" novalidate onsubmit="event.preventDefault(); if (window.abbaSaveLeave) window.abbaSaveLeave(); return false;">
+        <p class="field__error" id="addLeaveError" style="margin-bottom:0.75rem; display:none;"></p>
+        <div class="field">
+          <label class="field__label" for="leaveEmployeeId">Employee</label>
+          <select id="leaveEmployeeId" class="field__input field__select" required>
+            <option value="">Select employee</option>
+          </select>
+        </div>
+        <div class="order-form__row">
+          <div class="field">
+            <label class="field__label" for="leaveStartDate">Start date</label>
+            <input type="date" id="leaveStartDate" class="field__input" required>
+          </div>
+          <div class="field">
+            <label class="field__label" for="leaveEndDate">End date</label>
+            <input type="date" id="leaveEndDate" class="field__input" required>
+          </div>
+        </div>
+        <div class="order-form__row">
+          <div class="field">
+            <label class="field__label" for="leaveDays">Days</label>
+            <input type="number" id="leaveDays" class="field__input" min="0.5" step="0.5" required>
+          </div>
+          <div class="field">
+            <label class="field__label" for="leaveType">Type</label>
+            <select id="leaveType" class="field__input field__select">
+              <option value="annual">Annual</option>
+              <option value="sick">Sick</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field__label" for="leaveNotes">Notes (optional)</label>
+          <input type="text" id="leaveNotes" class="field__input">
+        </div>
+        <div class="modal__actions">
+          <button type="button" class="btn btn--outline" onclick="window.abbaCloseAddLeaveModal()">Cancel</button>
+          <button type="submit" class="btn btn--primary">Save leave</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>

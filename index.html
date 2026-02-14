@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign in — ABBA</title>
+  <title>Sign in — ABBA International Men's Wear</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
@@ -13,40 +13,41 @@
   <div class="page">
     <div class="panel panel--form">
       <header class="brand">
-        <h1 class="brand__name">ABBA</h1>
-        <p class="brand__tagline">Welcome back to your shop</p>
+        <img src="images/logo.png" alt="ABBA International Men's Wear" class="brand__logo">
+        <p class="brand__tagline brand__tagline--below-logo">International Men's Wear</p>
       </header>
 
       <form class="login-form" id="loginForm" novalidate>
         <div class="field">
-          <label class="field__label" for="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            class="field__input"
-            placeholder="you@example.com"
-            autocomplete="email"
+          <label class="field__label" for="branch">Branch</label>
+          <select
+            id="branch"
+            name="branch"
+            class="field__input field__select"
             required
           >
-          <span class="field__error" id="emailError" aria-live="polite"></span>
+            <option value="">Select branch</option>
+            <option value="admin">Admin</option>
+            <option value="panadura">Panadura</option>
+            <option value="nugegoda">Nugegoda</option>
+            <option value="piliyandala">Piliyandala</option>
+          </select>
+          <span class="field__error" id="branchError" aria-live="polite"></span>
         </div>
 
         <div class="field">
-          <div class="field__label-row">
-            <label class="field__label" for="password">Password</label>
-            <a href="#" class="field__link">Forgot password?</a>
+          <label class="field__label" id="pinLabel">PIN (8 digits)</label>
+          <div class="pin-boxes" id="pinBoxes" role="group" aria-labelledby="pinLabel">
+            <input type="password" class="pin-box" maxlength="1" inputmode="numeric" autocomplete="off" data-pin-index="0" aria-label="Digit 1">
+            <input type="password" class="pin-box" maxlength="1" inputmode="numeric" autocomplete="off" data-pin-index="1" aria-label="Digit 2">
+            <input type="password" class="pin-box" maxlength="1" inputmode="numeric" autocomplete="off" data-pin-index="2" aria-label="Digit 3">
+            <input type="password" class="pin-box" maxlength="1" inputmode="numeric" autocomplete="off" data-pin-index="3" aria-label="Digit 4">
+            <input type="password" class="pin-box" maxlength="1" inputmode="numeric" autocomplete="off" data-pin-index="4" aria-label="Digit 5">
+            <input type="password" class="pin-box" maxlength="1" inputmode="numeric" autocomplete="off" data-pin-index="5" aria-label="Digit 6">
+            <input type="password" class="pin-box" maxlength="1" inputmode="numeric" autocomplete="off" data-pin-index="6" aria-label="Digit 7">
+            <input type="password" class="pin-box" maxlength="1" inputmode="numeric" autocomplete="off" data-pin-index="7" aria-label="Digit 8">
           </div>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            class="field__input"
-            placeholder="••••••••"
-            autocomplete="current-password"
-            required
-          >
-          <span class="field__error" id="passwordError" aria-live="polite"></span>
+          <span class="field__error" id="pinError" aria-live="polite"></span>
         </div>
 
         <button type="submit" class="btn btn--primary" id="submitBtn">
@@ -62,7 +63,7 @@
     <div class="panel panel--art">
       <div class="art__content">
         <p class="art__quote">"Quality you can trust."</p>
-        <p class="art__brand">ABBA</p>
+        <p class="art__brand">ABBA International Men's Wear</p>
       </div>
     </div>
   </div>
