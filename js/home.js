@@ -714,6 +714,12 @@
     html += '<tr><td>Balance (LKR)</td><td>' + pending.toFixed(2) + '</td></tr>';
     if (notes) html += '<tr><td>Notes</td><td>' + esc(notes) + '</td></tr>';
     html += '</table><p class="foot">Thank you.</p></body></html>';
+
+    if (window.electronAPI && typeof window.electronAPI.printReceipt === 'function') {
+      window.electronAPI.printReceipt(html);
+      return;
+    }
+
     var w = window.open('', '_blank', 'width=400,height=600');
     if (!w) {
       alert('Please allow popups for this site to print the receipt.');
@@ -723,9 +729,11 @@
     w.document.close();
     w.focus();
     w.setTimeout(function () {
-      try { w.print(); } catch (e) {}
-      w.onafterprint = function () { w.close(); };
-    }, 250);
+      try {
+        w.print();
+        w.onafterprint = function () { w.close(); };
+      } catch (e) {}
+    }, 100);
   }
 
   if (orderForm && orderMessage) {
