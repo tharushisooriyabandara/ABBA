@@ -387,6 +387,7 @@
     var order = getOrderById(orderId);
     if (!order) return;
     window._abbaViewedOrderId = orderId;
+    window._abbaViewedOrder = order;
     var totalAmt = order.total_amount != null ? Number(order.total_amount) : (order.totalAmount != null ? Number(order.totalAmount) : 0);
     var advanceAmt = order.advance != null ? Number(order.advance) : 0;
     var status = (order.status || 'pending').toLowerCase();
@@ -436,9 +437,7 @@
   }
 
   function printOrderFromView() {
-    var id = window._abbaViewedOrderId;
-    if (!id) return;
-    var order = getOrderById(id);
+    var order = window._abbaViewedOrder || (window._abbaViewedOrderId ? getOrderById(window._abbaViewedOrderId) : null);
     if (order) printOrderReceipt(order);
   }
 
@@ -685,29 +684,41 @@
 
   function printOrderReceipt(order) {
     if (!order) return;
+    function esc(s) {
+      if (s == null || s === '') return '—';
+      s = String(s);
+      return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
     var orderNum = order.order_number || order.orderNumber || order.id || '—';
-    var dateStr = order.created_at || order.date || order.created_at;
+    var dateStr = order.created_at || order.date;
     if (dateStr) {
-      try { dateStr = new Date(dateStr).toLocaleString(); } catch (e) {}
+      try { dateStr = new Date(dateStr).toLocaleString(); } catch (e) { dateStr = '—'; }
     } else { dateStr = new Date().toLocaleString(); }
     var branch = order.branch_name || order.branchName || order.branch || '';
     var total = parseFloat(order.total_amount != null ? order.total_amount : order.totalAmount) || 0;
     var advance = parseFloat(order.advance) || 0;
     var pending = total - advance;
-    var html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Receipt #' + String(orderNum) + '</title><style>body{font-family:Georgia,serif;max-width:320px;margin:1rem auto;padding:1rem;}h1{font-size:1.25rem;margin:0 0 0.5rem;}h2{font-size:0.9rem;color:#555;margin:0 0 1rem;}table{width:100%;border-collapse:collapse;}td{padding:0.25rem 0;}td:first-child{color:#555;}tr.border td{border-top:1px solid #ddd;padding-top:0.5rem;}.total{font-weight:bold;font-size:1.1rem;}.foot{ margin-top:1.5rem;font-size:0.8rem;color:#666;}</style></head><body>';
+    var detailsRaw = order.order_details || order.orderDetails || '—';
+    var details = esc(detailsRaw).replace(/\n/g, '<br>');
+    var notes = order.notes && String(order.notes).trim();
+    var html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Receipt #' + esc(orderNum) + '</title><style>body{font-family:Georgia,serif;max-width:320px;margin:1rem auto;padding:1rem;}h1{font-size:1.25rem;margin:0 0 0.5rem;}h2{font-size:0.9rem;color:#555;margin:0 0 1rem;}table{width:100%;border-collapse:collapse;}td{padding:0.25rem 0;}td:first-child{color:#555;}tr.border td{border-top:1px solid #ddd;padding-top:0.5rem;}.total{font-weight:bold;font-size:1.1rem;}.foot{ margin-top:1.5rem;font-size:0.8rem;color:#666;}</style></head><body>';
     html += '<h1>ABBA International Men\'s Wear</h1><h2>Order Receipt</h2>';
-    html += '<table><tr><td>Order ID</td><td>' + String(orderNum) + '</td></tr>';
-    html += '<tr><td>Date</td><td>' + dateStr + '</td></tr>';
-    html += '<tr><td>Branch</td><td>' + (branch || '—') + '</td></tr>';
-    html += '<tr><td>Customer</td><td>' + (order.customer_name || order.customerName || '—') + '</td></tr>';
-    html += '<tr><td>Phone</td><td>' + (order.customer_phone || order.customerPhone || '—') + '</td></tr>';
-    html += '<tr class="border"><td>Details</td><td>' + (order.order_details || order.orderDetails || '—').replace(/\n/g, '<br>') + '</td></tr>';
+    html += '<table><tr><td>Order ID</td><td>' + esc(orderNum) + '</td></tr>';
+    html += '<tr><td>Date</td><td>' + esc(dateStr) + '</td></tr>';
+    html += '<tr><td>Branch</td><td>' + esc(branch) + '</td></tr>';
+    html += '<tr><td>Customer</td><td>' + esc(order.customer_name || order.customerName) + '</td></tr>';
+    html += '<tr><td>Phone</td><td>' + esc(order.customer_phone || order.customerPhone) + '</td></tr>';
+    html += '<tr class="border"><td>Details</td><td>' + details + '</td></tr>';
     html += '<tr class="border"><td>Total (LKR)</td><td class="total">' + total.toFixed(2) + '</td></tr>';
     html += '<tr><td>Advance (LKR)</td><td>' + advance.toFixed(2) + '</td></tr>';
     html += '<tr><td>Balance (LKR)</td><td>' + pending.toFixed(2) + '</td></tr>';
-    if (order.notes && order.notes.trim()) html += '<tr><td>Notes</td><td>' + order.notes.trim() + '</td></tr>';
+    if (notes) html += '<tr><td>Notes</td><td>' + esc(notes) + '</td></tr>';
     html += '</table><p class="foot">Thank you.</p></body></html>';
     var w = window.open('', '_blank', 'width=400,height=600');
+    if (!w) {
+      alert('Please allow popups for this site to print the receipt.');
+      return;
+    }
     w.document.write(html);
     w.document.close();
     w.focus();
