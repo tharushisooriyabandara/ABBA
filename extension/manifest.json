@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "ABBA Receipt Print",
+  "version": "1.0",
+  "description": "Print receipts from ABBA International Men's Wear in one click.",
+  "permissions": ["scripting", "activeTab", "tabs"],
+  "host_permissions": [
+    "https://tharushisooriyabandara.github.io/ABBA/*",
+    "https://localhost/*",
+    "file:///*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://tharushisooriyabandara.github.io/ABBA/*",
+        "https://localhost/*",
+        "file:///*/ABBA/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ]
+}

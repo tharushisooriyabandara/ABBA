@@ -288,7 +288,7 @@
         var isPaid = (status === 'returned' && paidFullOnReturn) || remainingFromAdvance <= 0;
         var statusText = (status === 'returned' ? 'Returned' : 'Pending') + (isPaid ? ' <span class="order-paid-tag">Paid</span>' : '');
         var orderIdDisplay = formatOrderNumber(row.order_number);
-        var dateStr = (row.created_at || row.date) ? new Date(row.created_at || row.date).toLocaleString() : '—';
+        var dateStr = (row.created_at || row.date) ? formatDateTime(row.created_at || row.date) : '—';
         var tr = document.createElement('tr');
         var safeId = String(rowId).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
         var viewBtn = '<button type="button" class="btn btn--outline btn--small" onclick="window.abbaViewOrder(\'' + safeId + '\')">View</button>';
@@ -395,9 +395,9 @@
     var remainingFromAdvance = Math.max(0, totalAmt - advanceAmt);
     var displayRemaining = (status === 'returned' && paidFullOnReturn) ? 0 : remainingFromAdvance;
     var isPaid = (status === 'returned' && paidFullOnReturn) || remainingFromAdvance <= 0;
-    var dateStr = (order.created_at || order.date) ? new Date(order.created_at || order.date).toLocaleString() : '—';
+    var dateStr = (order.created_at || order.date) ? formatDateTime(order.created_at || order.date) : '—';
     var returnedAt = order.returned_at;
-    var returnedDateStr = returnedAt ? new Date(returnedAt).toLocaleString() : '—';
+    var returnedDateStr = returnedAt ? formatDateTime(returnedAt) : '—';
     var dl = document.getElementById('orderViewDetails');
     if (dl) {
       var orderIdDisplay = formatOrderNumber(order.order_number);
@@ -583,7 +583,22 @@
     var d = new Date(dateStr);
     if (isNaN(d.getTime())) return dateStr;
     var y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
-    return y + '-' + m + '-' + day;
+    return day + '/' + m + '/' + y;
+  }
+
+  function formatDateTime(dateStrOrDate) {
+    if (dateStrOrDate == null) return '—';
+    var d = dateStrOrDate instanceof Date ? dateStrOrDate : new Date(dateStrOrDate);
+    if (isNaN(d.getTime())) return '—';
+    var day = String(d.getDate()).padStart(2, '0');
+    var m = String(d.getMonth() + 1).padStart(2, '0');
+    var y = d.getFullYear();
+    var h = d.getHours(), min = d.getMinutes();
+    var ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12;
+    if (h === 0) h = 12;
+    var timeStr = String(h).padStart(2, '0') + '.' + String(min).padStart(2, '0') + ' ' + ampm;
+    return day + '/' + m + '/' + y + ', ' + timeStr;
   }
   function formatNumber(n) {
     return Number(n).toLocaleString('en-LK', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
@@ -692,8 +707,8 @@
     var orderNum = order.order_number || order.orderNumber || order.id || '—';
     var dateStr = order.created_at || order.date;
     if (dateStr) {
-      try { dateStr = new Date(dateStr).toLocaleString(); } catch (e) { dateStr = '—'; }
-    } else { dateStr = new Date().toLocaleString(); }
+      try { dateStr = formatDateTime(dateStr); } catch (e) { dateStr = '—'; }
+    } else { dateStr = formatDateTime(new Date()); }
     var branch = order.branch_name || order.branchName || order.branch || '';
     var total = parseFloat(order.total_amount != null ? order.total_amount : order.totalAmount) || 0;
     var advance = parseFloat(order.advance) || 0;
@@ -717,6 +732,10 @@
 
     if (window.electronAPI && typeof window.electronAPI.printReceipt === 'function') {
       window.electronAPI.printReceipt(html);
+      return;
+    }
+    if (typeof window.__abbaPrintReceipt === 'function') {
+      window.__abbaPrintReceipt(html);
       return;
     }
 
@@ -1151,8 +1170,8 @@
       allForEmployee.forEach(function (r) {
         var tr = document.createElement('tr');
         tr.innerHTML =
-          '<td>' + escapeHtml(r.start_date || '—') + '</td>' +
-          '<td>' + escapeHtml(r.end_date || '—') + '</td>' +
+          '<td>' + escapeHtml(formatDisplayDate(r.start_date)) + '</td>' +
+          '<td>' + escapeHtml(formatDisplayDate(r.end_date)) + '</td>' +
           '<td>' + (r.days != null ? r.days : '—') + '</td>' +
           '<td>' + escapeHtml(r.leave_type || 'annual') + '</td>' +
           '<td>' + escapeHtml(r.notes || '—') + '</td>';
@@ -1212,7 +1231,7 @@
     pageList.forEach(function (item) {
       var b = item.emp.branch || 'other';
       var branchName = branchNames[b] || b;
-      html += '<tr><td>' + escapeHtml(branchName) + '</td><td>' + escapeHtml(item.emp.name) + '</td><td>' + escapeHtml(item.record.leave_type || 'annual') + '</td><td>' + escapeHtml(item.record.start_date || '—') + '</td><td>' + escapeHtml(item.record.end_date || '—') + '</td><td>' + (item.record.days != null ? item.record.days : '—') + '</td><td>' + escapeHtml(item.record.notes || '—') + '</td></tr>';
+      html += '<tr><td>' + escapeHtml(branchName) + '</td><td>' + escapeHtml(item.emp.name) + '</td><td>' + escapeHtml(item.record.leave_type || 'annual') + '</td><td>' + escapeHtml(formatDisplayDate(item.record.start_date)) + '</td><td>' + escapeHtml(formatDisplayDate(item.record.end_date)) + '</td><td>' + (item.record.days != null ? item.record.days : '—') + '</td><td>' + escapeHtml(item.record.notes || '—') + '</td></tr>';
     });
     html += '</tbody></table>';
     container.innerHTML = html;
